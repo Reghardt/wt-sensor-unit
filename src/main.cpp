@@ -9,6 +9,9 @@ int myFunction(int, int);
 
 NewPing ultra = NewPing(2, 3, MAX_DISTANCE);
 
+int interval=1000;
+unsigned long previousMillis=0;
+
 void setup() {
   pinMode(RS_MODE_PIN, OUTPUT);
   digitalWrite(RS_MODE_PIN, HIGH); // if low, is receiver
@@ -24,25 +27,33 @@ bool isFilling = true;
 void loop() {
   //auto reading = ultra.ping_cm();
 
-  Serial.println("###SR:" + String(reading) + "!$$$");
-  delay(200);
+  unsigned long currentMillis = millis();
 
-  
-  if(isFilling)
-  {
-    reading++;
-    if(reading >= 300)
+
+
+     
+  if((unsigned long)(currentMillis - previousMillis) >= interval) {
+    Serial.println("###SR:" + String(reading) + "!$$$");
+
+    if(isFilling)
     {
-      isFilling = false;
+      reading++;
+      if(reading >= 300)
+      {
+        isFilling = false;
+      }
     }
-  }
-  else
-  {
-    reading--;
-    if(reading <= 100)
+    else
     {
-      isFilling = true;
+      reading--;
+      if(reading <= 100)
+      {
+        isFilling = true;
+      }
     }
+    
+
+    previousMillis = currentMillis;
   }
 
 }
